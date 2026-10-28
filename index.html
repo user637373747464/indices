@@ -1,0 +1,437 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Indices">
+<meta name="theme-color" content="#000000">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+<title>Indices</title>
+<style>
+[hidden]{display:none!important}
+:root{--bg:#000;--fg:#fff;--g1:#0e0e0e;--g2:#181818;--g3:#2b2b2b;--g4:#777;--g5:#b0b0b0;color-scheme:dark}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--fg);font:16px/1.4 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif}
+body{display:flex;flex-direction:column;overflow:hidden;overscroll-behavior:none}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;touch-action:manipulation}
+#view{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:calc(env(safe-area-inset-top) + 18px) 16px 28px}
+h1{font-size:30px;margin:0 0 4px;letter-spacing:-.5px}
+h2{font-size:13px;text-transform:uppercase;letter-spacing:1px;color:var(--g4);margin:30px 0 4px;font-weight:600}
+.sub,.mut{color:var(--g4);font-size:14px}
+p{margin:10px 0}
+nav{display:flex;border-top:1px solid var(--g3);padding-bottom:env(safe-area-inset-bottom);background:var(--bg)}
+nav button{flex:1;background:none;border:0;color:var(--g4);padding:14px 0 12px;font-size:13px;font-weight:600;letter-spacing:.3px}
+nav button.on{color:var(--fg);box-shadow:inset 0 2px 0 var(--fg)}
+.btn{display:block;width:100%;padding:15px;border-radius:14px;border:1px solid var(--fg);background:var(--fg);color:#000;font-weight:600;font-size:17px;margin-top:10px}
+.btn.ghost{background:none;color:var(--fg);border-color:var(--g3)}
+.btn:disabled{opacity:.3}
+.btn.danger{background:none;color:var(--g5);border-color:var(--g3)}
+.hero{margin:26px 0 12px}
+.big{font-size:76px;font-weight:700;line-height:1;letter-spacing:-3px}
+.seg{display:flex;border:1px solid var(--g3);border-radius:12px;overflow:hidden;margin-top:6px}
+.seg button{flex:1;padding:11px 4px;background:none;border:0;font-size:14px;color:var(--g4)}
+.seg button.on{background:var(--fg);color:#000;font-weight:600}
+label{display:block;margin-top:16px;font-size:13px;color:var(--g5)}
+input,select,textarea{width:100%;background:var(--g1);border:1px solid var(--g3);border-radius:12px;padding:12px;font-size:16px;margin-top:6px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--g4)}
+.card{background:var(--g1);border:1px solid var(--g3);border-radius:18px;padding:14px;margin-top:14px}
+.photo{width:100%;max-height:46vh;object-fit:contain;background:#000;border-radius:12px;display:block}
+.q{color:var(--g4);font-size:14px;margin-top:12px;text-align:center}
+.country{font-size:34px;font-weight:700;letter-spacing:-.8px;text-align:center;margin:8px 0 6px}
+.clue{font-size:19px;margin:12px 0;text-align:center}
+.sim{color:var(--g5);font-size:14px;text-align:center;margin-top:10px}
+.chip{display:inline-block;border:1px solid var(--g3);border-radius:20px;padding:2px 10px;font-size:12px;color:var(--g5);margin:2px 0}
+.center{text-align:center}
+.back{border-top:1px solid var(--g3);margin-top:14px;padding-top:6px}
+.back .photo{margin-top:12px}
+.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.link{background:none;border:0;color:var(--g5);font-size:16px;padding:6px 0}
+.prog{height:3px;background:var(--g3);border-radius:2px;margin-bottom:6px}
+.prog div{height:3px;background:var(--fg);border-radius:2px}
+.grades{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px}
+.grades button{background:var(--g2);border:1px solid var(--g3);border-radius:12px;padding:13px 2px;font-weight:600;font-size:15px}
+.grades button.r{border-color:var(--fg)}
+.grades small{display:block;font-weight:400;color:var(--g4);font-size:11px;margin-top:3px}
+.row{display:flex;align-items:center;justify-content:space-between}
+.plus{width:40px;height:40px;border-radius:20px;background:var(--fg);color:#000;border:0;font-size:26px;line-height:1;font-weight:500}
+.item{display:flex;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--g2)}
+.item>div:last-child{min-width:0}
+.item .mut{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.thumb{width:60px;height:60px;border-radius:10px;object-fit:cover;background:var(--g2);flex:none}
+.ph{display:flex;align-items:center;justify-content:center;color:var(--g4);font-size:14px;border:1px dashed var(--g3);border-radius:12px;height:130px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.stat{background:var(--g1);border:1px solid var(--g3);border-radius:14px;padding:14px}
+.stat b{display:block;font-size:30px;letter-spacing:-1px}
+.bar{height:6px;background:var(--fg);border-radius:3px;margin-top:6px}
+.miss{margin-top:12px;font-size:15px}
+.miss span{color:var(--g4)}
+#sheet{position:fixed;inset:0;background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch;padding:calc(env(safe-area-inset-top) + 14px) 16px 50px;z-index:5}
+#zoom{position:fixed;inset:0;background:#000;z-index:9;display:flex;align-items:center;justify-content:center}
+#zoom img{max-width:100%;max-height:100%}
+</style>
+</head>
+<body>
+<div id="view"></div>
+<nav>
+  <button data-act="tab" data-v="review">Réviser</button>
+  <button data-act="tab" data-v="cards">Cartes</button>
+  <button data-act="tab" data-v="stats">Stats</button>
+</nav>
+<div id="sheet" hidden></div>
+<div id="zoom" hidden data-act="closezoom"><img alt=""></div>
+<input type="file" id="imp" accept=".json,application/json" hidden>
+
+<script>
+'use strict';
+const TAGS=['Bornes','Poteaux','Plaques','Lignes','Panneaux','Voiture Google','Sol / végétation','Architecture','Langue','Autre'];
+const COUNTRIES=`Afghanistan|Afrique du Sud|Albanie|Algérie|Allemagne|Andorre|Angola|Antarctique|Arabie saoudite|Argentine|Arménie|Australie|Autriche|Azerbaïdjan|Bahamas|Bahreïn|Bangladesh|Barbade|Belgique|Belize|Bénin|Bhoutan|Biélorussie|Birmanie|Bolivie|Bosnie-Herzégovine|Botswana|Brésil|Brunei|Bulgarie|Burkina Faso|Burundi|Cambodge|Cameroun|Canada|Cap-Vert|Chili|Chine|Chypre|Colombie|Comores|Congo|Corée du Nord|Corée du Sud|Costa Rica|Côte d'Ivoire|Croatie|Cuba|Danemark|Djibouti|Dominique|Égypte|Émirats arabes unis|Équateur|Érythrée|Espagne|Estonie|Eswatini|États-Unis|Éthiopie|Fidji|Finlande|France|Gabon|Gambie|Géorgie|Ghana|Grèce|Grenade|Groenland|Guadeloupe|Guam|Guatemala|Guinée|Guyane|Haïti|Honduras|Hongrie|Île de la Réunion|Îles Féroé|Îles Vierges américaines|Inde|Indonésie|Irak|Iran|Irlande|Islande|Israël|Italie|Jamaïque|Japon|Jordanie|Kazakhstan|Kenya|Kirghizistan|Kosovo|Koweït|Laos|Lesotho|Lettonie|Liban|Libéria|Libye|Liechtenstein|Lituanie|Luxembourg|Macédoine du Nord|Madagascar|Malaisie|Malawi|Maldives|Mali|Malte|Maroc|Martinique|Maurice|Mauritanie|Mexique|Moldavie|Monaco|Mongolie|Monténégro|Mozambique|Namibie|Népal|Nicaragua|Niger|Nigeria|Norvège|Nouvelle-Calédonie|Nouvelle-Zélande|Oman|Ouganda|Ouzbékistan|Pakistan|Palestine|Panama|Paraguay|Pays-Bas|Pérou|Philippines|Pologne|Polynésie française|Porto Rico|Portugal|Qatar|République dominicaine|République tchèque|Roumanie|Royaume-Uni|Russie|Rwanda|Saint-Marin|Sénégal|Serbie|Sierra Leone|Singapour|Slovaquie|Slovénie|Somalie|Soudan|Soudan du Sud|Sri Lanka|Suède|Suisse|Suriname|Syrie|Tadjikistan|Taïwan|Tanzanie|Tchad|Thaïlande|Togo|Trinité-et-Tobago|Tunisie|Turkménistan|Turquie|Ukraine|Uruguay|Venezuela|Vietnam|Yémen|Zambie|Zimbabwe`.split('|');
+
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const nl=s=>esc(s).replace(/\n/g,'<br>');
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+
+/* ---------- stockage (IndexedDB) ---------- */
+let _db=null;
+function idb(){return new Promise((res,rej)=>{const r=indexedDB.open('indices',1);r.onupgradeneeded=()=>r.result.createObjectStore('cards',{keyPath:'id'});r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
+async function tx(mode,fn){const d=_db||(_db=await idb());return new Promise((res,rej)=>{const t=d.transaction('cards',mode);const r=fn(t.objectStore('cards'));t.oncomplete=()=>res(r&&r.result);t.onerror=()=>rej(t.error);t.onabort=()=>rej(t.error)})}
+const dbAll=()=>tx('readonly',s=>s.getAll());
+const dbPut=c=>tx('readwrite',s=>s.put(c));
+const dbDel=id=>tx('readwrite',s=>s.delete(id));
+const dbClear=()=>tx('readwrite',s=>s.clear());
+
+/* ---------- répétition espacée ---------- */
+//<srs
+const newState=()=>({ease:2.5,interval:0,reps:0,lapses:0,due:0,last:0});
+const isNew=s=>!s.last;
+// q : 0 raté, 1 difficile, 2 bien, 3 facile
+function schedule(s,q,now=Date.now()){
+  const n={...s,last:now};
+  if(q===0){n.lapses=s.lapses+1;n.reps=0;n.interval=0;n.ease=Math.max(1.3,s.ease-0.2);n.due=now+10*60000;return n}
+  let d;
+  if(s.reps===0||s.interval<1){d=[0,1,2,4][q]}
+  else{d=Math.round(s.interval*(q===1?1.2:q===2?s.ease:s.ease*1.3));d=Math.max(d,s.interval+1)}
+  n.reps=s.reps+1;n.interval=d;
+  n.ease=Math.max(1.3,s.ease+(q===1?-0.15:q===3?0.1:0));
+  n.due=now+d*864e5;
+  return n;
+}
+function fmt(q,n){
+  if(q===0)return '10 min';
+  const d=n.interval;
+  if(d<30)return d+' j';
+  if(d<365)return Math.round(d/30)+' mois';
+  const y=Math.round(d/36.5)/10;return y+(y>=2?' ans':' an');
+}
+//srs>
+
+/* ---------- état ---------- */
+let cards=[];
+let tab='review';
+let session=null;
+let draft=null, pending=[];
+let lastCountry='', lastTag='Bornes';
+let lf={q:'',tag:''};
+let cfg={dir:'mix',tag:'',newMax:10};
+try{Object.assign(cfg,JSON.parse(localStorage.getItem('cfg')||'{}'))}catch(e){}
+const saveCfg=()=>{try{localStorage.setItem('cfg',JSON.stringify(cfg))}catch(e){}};
+const getLog=()=>{try{return JSON.parse(localStorage.getItem('log')||'[]')}catch(e){return[]}};
+const addLog=ok=>{try{const l=getLog();l.push({t:Date.now(),ok:ok?1:0});localStorage.setItem('log',JSON.stringify(l.slice(-3000)))}catch(e){}};
+const dayKey=t=>new Date(t-new Date(t).getTimezoneOffset()*6e4).toISOString().slice(0,10);
+
+function norm(c){c.fwd=c.fwd||newState();c.rev=c.rev||newState();c.tag=c.tag||'Autre';c.created=c.created||Date.now();c.clue=c.clue||'';c.similar=c.similar||'';return c}
+const sortCards=()=>cards.sort((a,b)=>a.created-b.created);
+
+/* ---------- éléments d'étude ---------- */
+// chaque carte donne jusqu'à 2 éléments : image→pays (fwd) et pays→indice (rev)
+function itemsFor(c){const o=[];if(c.img)o.push({c,dir:'fwd'});if(c.clue)o.push({c,dir:'rev'});return o}
+const stOf=it=>it.c[it.dir];
+function pool(){
+  return cards.filter(c=>!cfg.tag||c.tag===cfg.tag).flatMap(itemsFor).filter(i=>cfg.dir==='mix'||cfg.dir===i.dir);
+}
+function counts(){
+  const now=Date.now();let due=0,nw=0,miss=0;const items=pool();
+  for(const it of items){const s=stOf(it);if(isNew(s))nw++;else if(s.due<=now)due++;if(s.lapses>0)miss++}
+  return{due,nw:Math.min(nw,cfg.newMax),miss,total:items.length};
+}
+
+/* ---------- rendu ---------- */
+function render(){
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===tab));
+  $('nav').hidden=!!session&&tab==='review';
+  const v=$('#view');
+  if(tab==='review')v.innerHTML=session?viewSession():viewHome();
+  else if(tab==='cards'){v.innerHTML=viewCards();fillList()}
+  else v.innerHTML=viewStats();
+}
+
+function viewHome(){
+  if(!cards.length)return `<h1>Indices</h1><p class="mut">Aucune carte pour l'instant. Crée la première dans l'onglet « Cartes ».</p><button class="btn" data-act="tab" data-v="cards">Créer une carte</button>`;
+  const n=counts(),todo=n.due+n.nw;
+  const dirs=[['fwd','Image → pays'],['rev','Pays → indice'],['mix','Les deux']];
+  return `<h1>Indices</h1>
+  <div class="hero"><div class="big">${todo}</div><div class="sub">à réviser · ${n.due} à revoir, ${n.nw} nouvelle${n.nw>1?'s':''}</div></div>
+  <button class="btn" data-act="start" data-m="due" ${todo?'':'disabled'}>Commencer</button>
+  <button class="btn ghost" data-act="start" data-m="miss" ${n.miss?'':'disabled'}>Revoir mes ratés (${n.miss})</button>
+  <button class="btn ghost" data-act="start" data-m="free" ${n.total?'':'disabled'}>Révision libre (${n.total})</button>
+  <p class="mut center" style="margin-top:14px">La révision libre ne modifie pas ton planning.</p>
+  <h2>Réglages</h2>
+  <label>Sens des cartes</label>
+  <div class="seg">${dirs.map(d=>`<button data-act="dir" data-v="${d[0]}" class="${cfg.dir===d[0]?'on':''}">${d[1]}</button>`).join('')}</div>
+  <label>Catégorie</label>
+  <select data-cfg="tag"><option value="">Toutes</option>${TAGS.map(t=>`<option ${cfg.tag===t?'selected':''}>${esc(t)}</option>`).join('')}</select>
+  <label>Nouvelles cartes par session</label>
+  <select data-cfg="newMax">${[5,10,20,50,100].map(n=>`<option ${cfg.newMax===n?'selected':''}>${n}</option>`).join('')}</select>`;
+}
+
+function viewSession(){
+  const s=session,it=s.queue[0];
+  if(!it)return viewEnd();
+  const c=it.c;
+  const chip=`<div class="center"><span class="chip">${esc(c.tag)}</span></div>`;
+  const photo=`<img class="photo" data-act="zoom" src="${c.img}" alt="">`;
+  const sim=c.similar?`<div class="sim">Ressemble à : ${esc(c.similar)}</div>`:'';
+  const clue=c.clue?`<div class="clue">${nl(c.clue)}</div>`:'';
+  let front,back;
+  if(it.dir==='fwd'){
+    front=`${photo}<div class="q">Quel pays ?</div>`;
+    back=`<div class="country">${esc(c.country)}</div>${chip}${clue}${sim}`;
+  }else{
+    front=`<div class="country">${esc(c.country)}</div>${chip}<div class="q">Quel est l'indice ?</div>`;
+    back=`${clue}${c.img?photo:''}${sim}`;
+  }
+  const st=stOf(it);
+  const labels=['Raté','Difficile','Bien','Facile'];
+  const ctl=s.revealed
+    ?`<div class="grades">${labels.map((l,q)=>`<button class="${q===0?'r':''}" data-act="grade" data-q="${q}">${l}${s.practice?'':`<small>${fmt(q,schedule(st,q))}</small>`}</button>`).join('')}</div>`
+    :`<button class="btn" data-act="reveal">Voir la réponse</button>`;
+  return `<div class="top"><button class="link" data-act="quit">Quitter</button><span class="sub">${s.done} / ${s.total}</span></div>
+  <div class="prog"><div style="width:${Math.round(100*s.done/s.total)}%"></div></div>
+  <div class="card">${front}${s.revealed?`<div class="back">${back}</div>`:''}</div>${ctl}`;
+}
+
+function viewEnd(){
+  const s=session,m=[...s.missed];
+  return `<h1>Terminé</h1><div class="sub">${s.total} carte${s.total>1?'s':''} · ${s.ok} réussie${s.ok>1?'s':''} · ${s.ko} ratée${s.ko>1?'s':''}</div>
+  ${m.length?`<h2>À retravailler</h2><p>${m.map(esc).join(' · ')}</p>`:'<p class="mut">Aucune erreur.</p>'}
+  <button class="btn" data-act="quit">Retour</button>`;
+}
+
+function viewCards(){
+  return `<div class="row"><h1>Cartes</h1><button class="plus" data-act="new" aria-label="Nouvelle carte">+</button></div>
+  <div class="sub" id="count"></div>
+  <input id="q" placeholder="Rechercher un pays, un indice…" value="${esc(lf.q)}" autocomplete="off">
+  <select data-lf="tag"><option value="">Toutes les catégories</option>${TAGS.map(t=>`<option ${lf.tag===t?'selected':''}>${esc(t)}</option>`).join('')}</select>
+  <div id="list"></div>`;
+}
+function fillList(){
+  const q=lf.q.trim().toLowerCase();
+  const list=cards.filter(c=>(!lf.tag||c.tag===lf.tag)&&(!q||(c.country+' '+c.clue+' '+c.similar).toLowerCase().includes(q))).slice().reverse();
+  $('#count').textContent=cards.length+' carte'+(cards.length>1?'s':'')+(list.length!==cards.length?' · '+list.length+' affichée'+(list.length>1?'s':''):'');
+  $('#list').innerHTML=list.length?list.map(c=>`<div class="item" data-act="edit" data-id="${c.id}">${c.img?`<img class="thumb" loading="lazy" decoding="async" src="${c.img}" alt="">`:'<div class="thumb"></div>'}<div><b>${esc(c.country)}</b> <span class="chip">${esc(c.tag)}</span><div class="mut">${esc(c.clue)||'—'}</div></div></div>`).join(''):'<p class="mut">Rien ici.</p>';
+}
+
+function viewStats(){
+  const now=Date.now(),items=cards.flatMap(itemsFor);
+  const learned=items.filter(i=>!isNew(stOf(i))).length;
+  const mastered=items.filter(i=>stOf(i).interval>=21).length;
+  const due=items.filter(i=>!isNew(stOf(i))&&stOf(i).due<=now).length;
+  const log=getLog(),wk=log.filter(l=>l.t>now-7*864e5);
+  const rate=wk.length?Math.round(100*wk.filter(l=>l.ok).length/wk.length)+' %':'—';
+  const days=new Set(log.map(l=>dayKey(l.t)));let d=now,streak=0;
+  if(!days.has(dayKey(d)))d-=864e5;
+  while(days.has(dayKey(d))){streak++;d-=864e5}
+  const m=new Map();
+  for(const c of cards){const n=(c.fwd.lapses||0)+(c.rev.lapses||0);if(!n)continue;const k=c.country.trim().toLowerCase();const e=m.get(k)||{name:c.country.trim(),n:0};e.n+=n;m.set(k,e)}
+  const top=[...m.values()].sort((a,b)=>b.n-a.n).slice(0,6),max=top.length?top[0].n:1;
+  return `<h1>Stats</h1>
+  <div class="stats">
+    <div class="stat"><b>${cards.length}</b><span class="sub">cartes</span></div>
+    <div class="stat"><b>${due}</b><span class="sub">à revoir maintenant</span></div>
+    <div class="stat"><b>${learned}</b><span class="sub">éléments appris</span></div>
+    <div class="stat"><b>${mastered}</b><span class="sub">bien maîtrisés (≥ 21 j)</span></div>
+    <div class="stat"><b>${rate}</b><span class="sub">réussite sur 7 jours</span></div>
+    <div class="stat"><b>${streak}</b><span class="sub">jour${streak>1?'s':''} de suite</span></div>
+  </div>
+  <h2>Pays les plus ratés</h2>
+  ${top.length?top.map(t=>`<div class="miss">${esc(t.name)} <span>· ${t.n} erreur${t.n>1?'s':''}</span><div class="bar" style="width:${Math.max(6,Math.round(100*t.n/max))}%"></div></div>`).join(''):'<p class="mut">Pas encore d\'erreurs enregistrées.</p>'}
+  <h2>Données</h2>
+  <p class="mut">Tout est stocké sur ton téléphone. Fais un export de temps en temps : c'est ta sauvegarde, et le moyen de passer les cartes d'un appareil à l'autre.</p>
+  <button class="btn ghost" data-act="export">Exporter (sauvegarde)</button>
+  <button class="btn ghost" data-act="import">Importer un fichier</button>
+  <button class="btn danger" data-act="reset">Tout effacer</button>`;
+}
+
+/* ---------- session ---------- */
+function start(mode){
+  const now=Date.now(),items=pool();let q;
+  if(mode==='due'){
+    const due=items.filter(i=>{const s=stOf(i);return !isNew(s)&&s.due<=now});
+    const nw=items.filter(i=>isNew(stOf(i))).slice(0,cfg.newMax);
+    q=shuffle([...due,...nw]);
+  }else if(mode==='miss')q=shuffle(items.filter(i=>stOf(i).lapses>0));
+  else q=shuffle(items);
+  if(!q.length)return;
+  session={queue:q,total:q.length,done:0,ok:0,ko:0,revealed:false,practice:mode==='free',missed:new Set()};
+  render();
+}
+async function grade(q){
+  const s=session,it=s.queue.shift(),c=it.c;
+  if(!s.practice){c[it.dir]=schedule(c[it.dir],q);try{await dbPut(c)}catch(e){}addLog(q>0)}
+  if(q===0){s.ko++;s.missed.add(c.country);s.queue.splice(Math.min(3,s.queue.length),0,it)}
+  else{s.ok++;s.done++}
+  s.revealed=false;
+  $('#view').scrollTop=0;
+  render();
+}
+
+/* ---------- éditeur de carte ---------- */
+function openEditor(c){
+  pending=[];
+  draft=c?{...c}:{id:null,img:null,country:lastCountry,clue:'',similar:'',tag:lastTag};
+  showEditor();
+}
+function showEditor(){
+  const el=$('#sheet');el.hidden=false;el.scrollTop=0;
+  el.innerHTML=`<div class="row"><button class="link" data-act="close">Annuler</button><b>${draft.id?'Modifier la carte':'Nouvelle carte'}</b><span style="width:60px"></span></div>
+  <div id="prev" style="margin-top:14px"></div>
+  <div class="sub center" id="pend" style="margin-top:6px"></div>
+  <input type="file" id="file" accept="image/*" multiple hidden>
+  <button class="btn ghost" data-act="pick">Choisir des photos</button>
+  <label>Pays</label>
+  <input id="f-country" list="countries" value="${esc(draft.country)}" autocomplete="off" autocapitalize="words">
+  <datalist id="countries">${COUNTRIES.map(c=>`<option value="${esc(c)}">`).join('')}</datalist>
+  <label>Catégorie</label>
+  <select id="f-tag">${TAGS.map(t=>`<option ${draft.tag===t?'selected':''}>${esc(t)}</option>`).join('')}</select>
+  <label>Indice</label>
+  <textarea id="f-clue" rows="3" placeholder="ex : bornes blanches à bande rouge">${esc(draft.clue)}</textarea>
+  <label>Ressemble à (pays qu'on confond)</label>
+  <input id="f-sim" value="${esc(draft.similar)}" placeholder="ex : République tchèque, Slovaquie" autocomplete="off">
+  <button class="btn" data-act="save">Enregistrer</button>
+  ${draft.id?'':'<button class="btn ghost" data-act="savenext">Enregistrer et ajouter une autre</button>'}
+  ${draft.id?'<button class="btn danger" data-act="del">Supprimer la carte</button>':''}`;
+  paintPrev();
+}
+function paintPrev(msg){
+  $('#prev').innerHTML=draft.img?`<img class="photo" src="${draft.img}" alt="">`:'<div class="ph">Aucune photo</div>';
+  $('#pend').textContent=msg||(pending.length?`${pending.length} autre${pending.length>1?'s':''} photo${pending.length>1?'s':''} en attente`:'');
+}
+function sync(){
+  if(!$('#f-country'))return;
+  draft.country=$('#f-country').value;draft.clue=$('#f-clue').value;draft.similar=$('#f-sim').value;draft.tag=$('#f-tag').value;
+}
+function closeEditor(){$('#sheet').hidden=true;$('#sheet').innerHTML='';draft=null;pending=[]}
+
+function loadImg(file){return new Promise((res,rej)=>{const u=URL.createObjectURL(file),i=new Image();i.onload=()=>{res(i);URL.revokeObjectURL(u)};i.onerror=()=>{URL.revokeObjectURL(u);rej(new Error('img'))};i.src=u})}
+async function shrink(file,max=1100){
+  const i=await loadImg(file),k=Math.min(1,max/Math.max(i.width,i.height));
+  const cv=document.createElement('canvas');cv.width=Math.round(i.width*k);cv.height=Math.round(i.height*k);
+  cv.getContext('2d').drawImage(i,0,0,cv.width,cv.height);
+  return cv.toDataURL('image/jpeg',.8);
+}
+async function onFiles(files){
+  const list=[...files];if(!list.length)return;
+  sync();$('#pend').textContent='Traitement…';
+  const out=[];
+  for(const f of list){try{out.push(await shrink(f))}catch(e){}}
+  $('#file').value='';
+  if(!out.length){paintPrev('Image illisible');return}
+  draft.img=out.shift();pending=out;paintPrev();
+}
+
+async function save(next){
+  sync();
+  if(!draft.country.trim()){alert('Indique le pays.');return}
+  if(!draft.img&&!draft.clue.trim()){alert('Ajoute une photo ou un indice.');return}
+  const old=draft.id?cards.find(x=>x.id===draft.id):null;
+  const c=norm({id:draft.id||uid(),img:draft.img,country:draft.country.trim(),clue:draft.clue.trim(),similar:draft.similar.trim(),tag:draft.tag,created:old?old.created:Date.now(),fwd:old?old.fwd:newState(),rev:old?old.rev:newState()});
+  try{await dbPut(c)}catch(e){alert("Impossible d'enregistrer (stockage plein ?).");return}
+  const i=cards.findIndex(x=>x.id===c.id);if(i>=0)cards[i]=c;else cards.push(c);
+  lastCountry=c.country;lastTag=c.tag;
+  if(next&&!old){
+    draft={id:null,img:pending.shift()||null,country:c.country,clue:'',similar:'',tag:c.tag};
+    showEditor();
+  }else closeEditor();
+  render();
+}
+
+/* ---------- sauvegarde ---------- */
+async function exportData(){
+  const name='indices-'+dayKey(Date.now())+'.json';
+  const blob=new Blob([JSON.stringify({v:1,cards})],{type:'application/json'});
+  const file=new File([blob],name,{type:'application/json'});
+  if(navigator.canShare&&navigator.canShare({files:[file]})){
+    try{await navigator.share({files:[file]});return}catch(e){if(e.name==='AbortError')return}
+  }
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),5000);
+}
+async function importData(f){
+  try{
+    const d=JSON.parse(await f.text()),list=Array.isArray(d)?d:d.cards;
+    if(!Array.isArray(list))throw new Error('format');
+    let n=0;
+    for(const c of list){
+      if(!c||!c.id||!c.country)continue;
+      norm(c);await dbPut(c);
+      const i=cards.findIndex(x=>x.id===c.id);if(i>=0)cards[i]=c;else cards.push(c);n++;
+    }
+    sortCards();alert(n+' carte'+(n>1?'s':'')+' importée'+(n>1?'s':'')+'.');render();
+  }catch(e){alert('Fichier non valide.')}
+}
+
+/* ---------- événements ---------- */
+document.addEventListener('click',async e=>{
+  const b=e.target.closest('[data-act]');if(!b)return;
+  const a=b.dataset.act;
+  if(a==='tab'){tab=b.dataset.v;render()}
+  else if(a==='dir'){cfg.dir=b.dataset.v;saveCfg();render()}
+  else if(a==='start')start(b.dataset.m);
+  else if(a==='reveal'){session.revealed=true;render()}
+  else if(a==='grade')grade(+b.dataset.q);
+  else if(a==='quit'){session=null;render()}
+  else if(a==='zoom'){const c=session.queue[0].c;$('#zoom img').src=c.img;$('#zoom').hidden=false}
+  else if(a==='closezoom'){$('#zoom').hidden=true}
+  else if(a==='new')openEditor(null);
+  else if(a==='edit')openEditor(cards.find(c=>c.id===b.dataset.id));
+  else if(a==='close')closeEditor();
+  else if(a==='pick')$('#file').click();
+  else if(a==='save')save(false);
+  else if(a==='savenext')save(true);
+  else if(a==='del'){
+    if(!confirm('Supprimer cette carte ?'))return;
+    const id=draft.id;await dbDel(id);cards=cards.filter(c=>c.id!==id);closeEditor();render();
+  }
+  else if(a==='export')exportData();
+  else if(a==='import')$('#imp').click();
+  else if(a==='reset'){
+    if(!confirm('Effacer toutes les cartes ? Pense à exporter avant.'))return;
+    await dbClear();cards=[];try{localStorage.removeItem('log')}catch(e){}render();
+  }
+});
+document.addEventListener('change',e=>{
+  const t=e.target;
+  if(t.id==='file'){onFiles(t.files);return}
+  if(t.id==='imp'){if(t.files[0])importData(t.files[0]);t.value='';return}
+  if(t.dataset&&t.dataset.cfg){cfg[t.dataset.cfg]=t.dataset.cfg==='newMax'?+t.value:t.value;saveCfg();render()}
+  else if(t.dataset&&t.dataset.lf){lf[t.dataset.lf]=t.value;fillList()}
+});
+document.addEventListener('input',e=>{if(e.target.id==='q'){lf.q=e.target.value;fillList()}});
+
+/* ---------- démarrage ---------- */
+(async()=>{
+  try{cards=await dbAll()}catch(e){cards=[]}
+  cards.forEach(norm);sortCards();
+  try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
+  render();
+})();
+if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+</script>
+</body>
+</html>
